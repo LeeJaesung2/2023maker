@@ -1,42 +1,50 @@
 #include "maker.h"
 
-void WifiClass::connWifi(){
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    #if(DEBUG)
-        Serial.print("Connecting to Wi-Fi");
-    #endif
-    while (WiFi.status() != 3){
-        #if(DEBUG)
-        Serial.print(".");
-        #endif
-        delay(300);
-    }
-    #if(DEBUG)
-        Serial.println();
-        Serial.print("Connected with IP: ");
-        Serial.println(WiFi.localIP());
-        Serial.println();
-    #endif
-}
 
 
-void FanMotorClass::turnOnMotor(){
-
+void FanMotorClass::turnOnMotor(int speed){
+    analogWrite(fanPin,speed);
 }
 
 void FanMotorClass::turnOffMotor(){
+    analogWrite(fanPin,0);
+}
+
+
+void DustSensorClass::readDustDensity(){
+    if((unsigned long)(mills() - dustReadPriviousMillis) >= dustReadInterval){
+        dustReadPriviousMillis = mills();
+        dustRaw = dustSensor.getDustDensity();
+        dustAverage = dustSensor.getRunningAverage();
+        if(dustAverage > 200){
+            dustAverage = 200;
+        }
+        #if(DEBUG)
+            Serial.print("Dust density: ");
+            Serial.print(dustAverage);
+            Serial.println("[ug/m3]");
+        #endif
+    }
+
+
+}
+
+void turnOnLed(int color){
     
 }
 
-
-void DustSensorClass::getDuststValue(){
-
-}
-
-void TempAndHumSensorClass::getTemprature(){
-
-}
-
-void TempAndHumSensorClass::getHumidity(){
-    
+void DHTSensorClass::readDHT(){
+    if((unsigned long)(millis()-dht11PreviousMillis) >= dht11Interval){
+        dht11PreviousMillis = millis();
+        humidity = dht.readHumidity();
+        temperature = dht.readTemperature();
+        #if(DEBUG)
+            Serial.print(F("Humidity: "));
+            Serial.print(humidity);
+            Serial.println(F("[%]"));
+            Serial.print(F("Temperature: "));
+            Serial.print(temperature);
+            Serial.println(F("[*C]"));
+        #endif
+    }
 }

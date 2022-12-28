@@ -1,38 +1,60 @@
 #ifndef __MAKER_H__
 #define __MAKER_H__
-#include <WiFi.h>
+#include "thingProperties.h"
+#include <BlynkSimpleEsp8266.h>
+#include <GP2YDustSensor.h> //dust sensor
+#include <DHT.h> //humidity and temperature sensor
+#include <Adafruit_NeoPixel.h> //neopixel
 #include <SoftwareSerial.h>
 
-#define WIFI_SSID "ssid"
 #define WIFI_PASSWORD "passward"
 #define DEBUG true; 
 
 class WifiClass{
     public:
-        void connWifi();
+        const *char ssid = "jaesung's iPhone";
+        const *char password = "1234567890";
 };
 
 class FanMotorClass{
     public:
-        void turnOnMotor();
+        void turnOnMotor(int speed);
         void turnOffMotor();
 
 };
 
 class NeopixelClass{
+    enum{
+        led;
+        green;
+        blue;
+        orange;
+        purple
+    }color;
+
+    void turnOnLed(int color);
 
 };
 
 class DustSensorClass{
     public:
-        void getDuststValue();
+        unsigned long dustReadPriviousMillis;
+        unsigned long dustReadInterval = 100;
+        float dustRaw;
+        float dustAverage;
+
+        void readDustDensity();
 
 };
 
-class TempAndhumSensorClass{
+class DHTSensorClass{
     public:
-        void getTemperature();
-        void getHumidity();
+        unsigned long dht11PreviousMillis;
+        unsigned long dht11Interval = 100;
+        float humidity;
+        float temperature;
+
+        void readDHT();
 
 };
 
